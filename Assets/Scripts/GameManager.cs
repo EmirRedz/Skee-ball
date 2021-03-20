@@ -16,6 +16,10 @@ public class GameManager : MonoBehaviour
     public TMP_Text scoreTextReference;
     public TextMeshProUGUI scoreText;
 
+    public int ticketsEarned;
+    private int totalTickets;
+    public TextMeshProUGUI ticketsText;
+
 
     private void Awake()
     {
@@ -24,8 +28,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
         StartCoroutine(BallSetter());
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     public void SetBalls()
@@ -240,5 +244,13 @@ public class GameManager : MonoBehaviour
         endGameHolder.SetActive(true);
         endGameAnimator.SetTrigger("isIn");
         scoreText.text ="Score " + scoreTextReference.text;
+        ticketsEarned = int.Parse(scoreTextReference.text)/ 10;
+        ticketsText.text = "Tickets:" + ticketsEarned;
+        IncreaseTickets();
+    }
+
+    private void IncreaseTickets()
+    {
+        PlayerPrefs.SetInt("TotalTickets", ticketsEarned + Score.totalTickets);
     }
 }

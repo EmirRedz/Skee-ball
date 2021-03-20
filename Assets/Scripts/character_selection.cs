@@ -32,6 +32,7 @@ public class character_selection : MonoBehaviour
         if (characterList[index])
         {
             characterList[index].SetActive(true);
+            IsBallUnlocked(characterList[index]);
             activeBallName = characterList[index].name;
         }
     }
@@ -73,6 +74,7 @@ public class character_selection : MonoBehaviour
         }
 
         characterList[index].SetActive(true);
+        IsBallUnlocked(characterList[index]);
     }
 
     public void ToggleRight()
@@ -84,6 +86,7 @@ public class character_selection : MonoBehaviour
             index = 0;
         }
         characterList[index].SetActive(true);
+        IsBallUnlocked(characterList[index]);
     }
 
     public void ConfirmButton()
@@ -95,5 +98,23 @@ public class character_selection : MonoBehaviour
     {
         yield return new WaitForSeconds(2);
         ballName.gameObject.SetActive(true); 
+    }
+
+    private void IsBallUnlocked(GameObject currentBall)
+    {
+        if (currentBall.GetComponent<UnlockBall>() != null && currentBall.GetComponent<UnlockBall>().isUnlocked)
+        {
+            if (confirmButton != null)
+            {
+                confirmButton.interactable = true;
+            }
+        }
+        else
+        {
+            if (confirmButton != null)
+            {
+                confirmButton.interactable = false;
+            }
+        }
     }
 }

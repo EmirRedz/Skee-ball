@@ -5,7 +5,8 @@ using UnityEngine;
 public class CameraSwitchController : MonoBehaviour
 {
     private MoveBall moveBall;
-    [SerializeField] private GameObject mainCam, shotCam;
+    public GameObject mainCam, shotCam;
+    public float shotCamDuration;
     [SerializeField] private GameObject scoreText, ballText;
     [SerializeField] private float toggleTextDelay = 1;
     private float lastToggleText = 0;
@@ -23,6 +24,7 @@ public class CameraSwitchController : MonoBehaviour
     void Update()
     {
         CameraSwitch();
+        ShotCamOnScreenTime();
     }
 
     private void CameraSwitch()
@@ -38,7 +40,7 @@ public class CameraSwitchController : MonoBehaviour
         }
         else
         {
-            
+
             if (lastToggleText <= 0)
             {
                 scoreText.SetActive(true);
@@ -49,14 +51,19 @@ public class CameraSwitchController : MonoBehaviour
             {
                 lastToggleText -= Time.deltaTime;
             }
-            
+
         }
     }
 
-    IEnumerator ToggleText()
+    private void ShotCamOnScreenTime()
     {
-        yield return new WaitForSeconds(toggleTextDelay);
-        scoreText.SetActive(true);
-        ballText.SetActive(true);     
+        if (shotCam.activeInHierarchy)
+        {
+            shotCamDuration += Time.deltaTime;
+        }
+        else
+        {
+            shotCamDuration = 0;
+        }
     }
 }

@@ -4,12 +4,15 @@ using UnityEngine;
 using TMPro;
 public class MoveBall : MonoBehaviour
 {
+
+    CameraSwitchController cameraController;
+
     public float throwSpeed = 1100;
     public GameObject ballPrefab;
     GameObject ball;
     private Vector2 startPos;
     private Vector2 endPos;
-    [SerializeField] private Vector2 minDistance = new Vector2(0, 100);
+    [SerializeField] private float minDistance = 100;
     [SerializeField] private Vector3 ballPos = new Vector3(0, 0.38f, -11.41f);
     private Vector3 ballSpawnPos;
     [SerializeField] private Vector2 randomLeft, randomMid, randomRight;
@@ -28,6 +31,10 @@ public class MoveBall : MonoBehaviour
     public ParticleSystem throwParticle;
     public Quaternion spawnRot = Quaternion.Euler(0, 180, 0);
 
+    private void Awake()
+    {
+        cameraController = FindObjectOfType<CameraSwitchController>();
+    }
 
     private void Start()
     {
@@ -39,12 +46,11 @@ public class MoveBall : MonoBehaviour
     { 
         Vector2 mousePos = Input.mousePosition;
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && !ballOnStage && ballsLeft > 0 && cameraController.mainCam.activeInHierarchy)
         {
             ray = Camera.main.ScreenPointToRay(mousePos);
             if(Physics.Raycast(ray, out hit, maxDistnace, fieldMask))
             {
-                Debug.Log("hit floor here: " + hit.point);
                 ballSpawnPos = new Vector3(hit.point.x, ballPos.y, ballPos.z);
 
                 if(ball != null)
@@ -57,7 +63,7 @@ public class MoveBall : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             startPos = Input.mousePosition;
-            if (!ballOnStage && ballsLeft > 0 && !canShoot)
+            if (!ballOnStage && ballsLeft > 0 && !canShoot && cameraController.mainCam.activeInHierarchy)
             {
                 ball = Instantiate(ballPrefab, ballSpawnPos, transform.rotation);
                 ball.GetComponent<Rigidbody>().isKinematic = true;
@@ -71,22 +77,9 @@ public class MoveBall : MonoBehaviour
             endPos = Input.mousePosition;
         }
 
-        if (endPos.y - startPos.y >= minDistance.y && !ballOnStage && ballsLeft > 0)
+        if (endPos.y - startPos.y >= minDistance && !ballOnStage && ballsLeft > 0)//Throwing
         {
-            //if (mousePos.x >= 0 && mousePos.x <= Screen.width / 3)
-            //{
-            //    ballPos.x = Random.Range(-randomLeft.x, randomLeft.y);
-            //}
-            ///* Center */
-            //else if (mousePos.x > Screen.width / 3 && mousePos.x <= (Screen.width / 3) * 2)
-            //{
-            //    ballPos.x = Random.Range(randomMid.x, randomMid.y);
-            //}
-            ///* Right */
-            //else if (mousePos.x > (Screen.width / 3) * 2 && mousePos.x <= Screen.width)
-            //{
-            //    ballPos.x = Random.Range(randomRight.x, randomRight.y);
-            //}
+
             if (ball != null)
             {
                 ball.GetComponent<Rigidbody>().isKinematic = false;
@@ -95,12 +88,34 @@ public class MoveBall : MonoBehaviour
             }
 
             AudioManager.Instance.PlaySound2D("Shoot");
-            //ParticleSystem newThrowParticle = Instantiate(throwParticle, ball.transform.position + (Vector3.forward * 2), spawnRot);
-            //Destroy(newThrowParticle, 1);
+
             endPos = Vector2.zero;
             startPos = Vector2.zero;
             ballOnStage = true;
         }
+
+        StuckScreenCheck(10f);
+    }
+
+    private void StuckScreenCheck(float threshHold)
+    {
+        if(cameraController.shotCamDuration >= threshHold)
+        {
+            DestroyBall();
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    private void DestroyBall()
+    {
+        ballOnStage = false;
+        canShoot = false;
+        ballsLeft--;
+        ballText.text = ballsLeft.ToString();
+        Destroy(ball);
     }
 }
 
