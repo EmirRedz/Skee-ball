@@ -45,6 +45,7 @@ public class MenuManager : MonoBehaviour
 
     public void HowToPlayButton()
     {
+        FindObjectOfType<AdMobShow>().DisplayInterstitial();
         StartCoroutine(SwitchMenus(mainMenuHolder, howToPlayHolder, cameraSwitcher.cameras[Mathf.RoundToInt(cameraSwitcher.currentCamera)], howToPlayCamera));
     }
 
@@ -55,6 +56,7 @@ public class MenuManager : MonoBehaviour
 
     public void ShopButton()
     {
+        FindObjectOfType<AdMobShow>().DisplayInterstitial();
         StartCoroutine(SwitchMenus(mainMenuHolder, shopHolder, cameraSwitcher.cameras[Mathf.RoundToInt(cameraSwitcher.currentCamera)], shopCamera));
     }
     public void BackFromShopButton()

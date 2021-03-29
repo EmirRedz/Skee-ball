@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class GameManager : MonoBehaviour
     private int totalTickets;
     public TextMeshProUGUI ticketsText;
 
+    public Button watchAdButton;
+
 
     private void Awake()
     {
@@ -30,6 +33,7 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(BallSetter());
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        watchAdButton.onClick.AddListener(() => FindObjectOfType<AdMobShow>().RequestRewardAd());
     }
 
     public void SetBalls()
@@ -92,7 +96,7 @@ public class GameManager : MonoBehaviour
     private GameObject NextBallBart()
     {
         GameObject nextBall;
-        if(moveBall.ballsLeft <= 3)
+        if (moveBall.ballsLeft <= 3)
         {
             nextBall = Balls[0];
         }
@@ -110,7 +114,7 @@ public class GameManager : MonoBehaviour
         {
             nextBall = Balls[2];
         }
-        else if(moveBall.ballsLeft <= 4)
+        else if (moveBall.ballsLeft <= 4)
         {
             nextBall = Balls[1];
         }
@@ -132,7 +136,7 @@ public class GameManager : MonoBehaviour
         {
             nextBall = Balls[2];
         }
-        else if(moveBall.ballsLeft <= 4)
+        else if (moveBall.ballsLeft <= 4)
         {
             nextBall = Balls[1];
         }
@@ -159,7 +163,7 @@ public class GameManager : MonoBehaviour
         {
             nextBall = Balls[2];
         }
-        else if(moveBall.ballsLeft <= 5)
+        else if (moveBall.ballsLeft <= 5)
         {
             nextBall = Balls[1];
         }
@@ -190,7 +194,7 @@ public class GameManager : MonoBehaviour
         {
             nextBall = Balls[2];
         }
-        else if(moveBall.ballsLeft <= 6)
+        else if (moveBall.ballsLeft <= 6)
         {
             nextBall = Balls[1];
         }
@@ -243,8 +247,8 @@ public class GameManager : MonoBehaviour
     {
         endGameHolder.SetActive(true);
         endGameAnimator.SetTrigger("isIn");
-        scoreText.text ="Score " + scoreTextReference.text;
-        ticketsEarned = int.Parse(scoreTextReference.text)/ 10;
+        scoreText.text = "Score " + scoreTextReference.text;
+        ticketsEarned = int.Parse(scoreTextReference.text) / 10;
         ticketsText.text = "Tickets:" + ticketsEarned;
         IncreaseTickets();
     }
@@ -253,4 +257,6 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("TotalTickets", ticketsEarned + Score.totalTickets);
     }
+
+
 }
